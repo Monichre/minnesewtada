@@ -24,7 +24,9 @@ export default async function Navbar() {
           <Link href="/" className="mr-2 flex w-full items-center justify-center md:w-auto lg:mr-6">
             <LogoSquare />
             <div className="ml-2 flex-none text-sm font-medium uppercase md:hidden lg:block">
-              {SITE_NAME}
+              <span className="bg-gradient-to-r from-[#4F46E5] to-[#E114E5] bg-clip-text text-transparent">
+                {SITE_NAME}
+              </span>
             </div>
           </Link>
           {menu.length ? (
