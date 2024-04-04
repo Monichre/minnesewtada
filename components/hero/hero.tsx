@@ -24,7 +24,7 @@ export const Hero = ({ products }: { products: any[] }) => {
               </p>
               <div className="space-x-4">
                 <Button className="bg-rose-500 hover:bg-rose-600" size="lg">
-                  <Link href="/products">Shop Now</Link>
+                  <Link href="/search/all">Shop Now</Link>
                 </Button>
                 <Button
                   className="border-rose-500 text-rose-500 hover:bg-rose-500 hover:text-white"

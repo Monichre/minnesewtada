@@ -55,6 +55,7 @@ const domain = process.env.SHOPIFY_STORE_DOMAIN
   : '';
 const endpoint = `${domain}${SHOPIFY_GRAPHQL_API_ENDPOINT}`;
 const key = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN!;
+console.log('endpoint: ', endpoint);
 
 type ExtractVariables<T> = T extends { variables: object } ? T['variables'] : never;
 
@@ -113,6 +114,37 @@ export async function shopifyFetch<T>({
     };
   }
 }
+
+export const createSpecialOrder = async (specialOrder: any) => {
+  const { fields } = specialOrder;
+  console.log('fields: ', fields);
+  const res = await shopifyFetch<any>({
+    query: `mutation CreateMetaobject($metaobject: MetaobjectCreateInput!) {
+      metaobjectCreate(metaobject: $metaobject) {
+        metaobject {
+          handle
+          fields {
+            value
+          }
+        }
+        userErrors {
+          field
+          message
+          code
+        }
+      }
+    }`,
+    variables: {
+      metaobject: {
+        type: 'special_request',
+        fields: [...fields]
+      }
+    },
+    cache: 'no-store'
+  });
+  console.log('res: ', res);
+  return res;
+};
 
 const removeEdgesAndNodes = (array: Connection<any>) => {
   return array.edges.map((edge) => edge?.node);
