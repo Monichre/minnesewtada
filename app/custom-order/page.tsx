@@ -3,9 +3,13 @@
 }
 
 import { SpecialOrder } from '@/components/special-order/special-order';
+import { createSpecialOrder } from '@/lib/shopify';
 
-export default async function Page({ params }: { params: { page: string } }) {
-  console.log('params: ', params);
+export default async function Page() {
+  const submitSpecialRequest = async (fields: any) => {
+    const res = await createSpecialOrder({ fields });
+    console.log('res: ', res);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-200 via-orange-100 to-yellow-200">
@@ -20,7 +24,7 @@ export default async function Page({ params }: { params: { page: string } }) {
                 Fill out the form below and get in touch!
               </p>
               <div className="space-x-4">
-                <SpecialOrder />
+                <SpecialOrder submit={submitSpecialRequest} />
               </div>
             </div>
           </div>

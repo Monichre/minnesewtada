@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
-import { createSpecialOrder } from '@/lib/shopify';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -46,7 +45,7 @@ const formSchema = z.object({
   })
 });
 
-export const SpecialOrder = () => {
+export const SpecialOrder = ({ submit }: any) => {
   // bg-gradient-to-br from-pink-200 via-orange-100 to-yellow-200 py-12 md:py-16 lg:py-24
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,16 +54,15 @@ export const SpecialOrder = () => {
 
   // 2. Define a submit handler.
   const onSubmit = async (data: any) => {
-    console.log('data: ', data);
     const fields = Object.keys(data).map((key: any) => {
       return {
         key,
         value: data[key]
       };
     });
-    console.log('fields: ', fields);
-    const res = await createSpecialOrder({ fields });
-    console.log('res: ', res);
+
+    await submit(fields);
+
     toast({
       title: 'Success!',
       description: (
