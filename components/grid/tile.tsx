@@ -1,6 +1,7 @@
-import clsx from 'clsx';
 import Image from 'next/image';
 import Label from '../label';
+import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
 
 export function GridTileImage({
   isInteractive = true,
@@ -18,33 +19,27 @@ export function GridTileImage({
   };
 } & React.ComponentProps<typeof Image>) {
   return (
-    <div
-      className={clsx(
-        'group flex h-full w-full items-center justify-center overflow-hidden rounded-lg border bg-white hover:border-blue-600 dark:bg-black',
-        {
-          relative: label,
-          'border-2 border-blue-600': active,
-          'border-neutral-200 dark:border-neutral-800': !active
-        }
-      )}
-    >
-      {props.src ? (
-        // eslint-disable-next-line jsx-a11y/alt-text -- `alt` is inherited from `props`, which is being enforced with TypeScript
-        <Image
-          className={clsx('relative h-full w-full object-contain', {
-            'transition duration-300 ease-in-out group-hover:scale-105': isInteractive
-          })}
-          {...props}
-        />
-      ) : null}
-      {label ? (
-        <Label
-          title={label.title}
-          amount={label.amount}
-          currencyCode={label.currencyCode}
-          position={label.position}
-        />
-      ) : null}
-    </div>
+    <Card>
+      <CardContent className="flex flex-col items-center p-4">
+        <Image {...props} className="aspect-square rounded-lg object-cover object-center" />
+        {label ? (
+          <Label
+            title={label.title}
+            amount={label.amount}
+            currencyCode={label.currencyCode}
+            position={label.position}
+          />
+        ) : null}
+        {/* <h3 className="mt-4 text-xl font-semibold text-gray-800">
+        Chocolate Chip Cookie
+      </h3>
+      <p className="mt-2 text-gray-600">
+        A sweet and cuddly treat that'll melt your heart.
+      </p> */}
+        <Button className="mt-4 bg-rose-500 hover:bg-rose-600" size="sm">
+          Buy Now
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
