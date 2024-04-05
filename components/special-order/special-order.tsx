@@ -1,6 +1,7 @@
-'use server';
+'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -22,55 +23,90 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
+
+interface ShippingAddress {
+  address1: string;
+  address2: string;
+  city: string;
+  provinceCode: string;
+  zip: string;
+}
+interface CustomRequest {
+  address: ShippingAddress;
+  phone: string;
+  firstName: string;
+  lastName: string;
+  title: string;
+  email: string;
+  description: string;
+  size: string;
+}
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Name must be at least 2 characters.'
+  email: z.string(),
+  size: z.string(),
+  title: z.string(),
+  description: z.string(),
+  address1: z.string().min(1, {
+    message: 'Address1 must be at least 1 character.'
   }),
-  description: z.string().min(10, {
-    message: 'Description must be at least 10 characters.'
+  address2: z.string().min(1, {
+    message: 'Address2 must be at least 1 character.'
   }),
-  size: z.string().min(5, {
-    message: 'Size must be at least 5.'
+  city: z.string().min(1, {
+    message: 'City must be at least 1 character.'
   }),
-  email: z.string().email({
-    message: 'Email must be a valid email address.'
+
+  firstName: z.string().min(1, {
+    message: 'First name must be at least 1 character.'
+  }),
+  lastName: z.string().min(1, {
+    message: 'Last name must be at least 1 character.'
   }),
   phone: z.string().length(10, {
     message: 'Phone number must be exactly 10 digits.'
   }),
-  address: z.string().min(5, {
-    message: 'Address must be at least 5 characters.'
+  provinceCode: z.string().min(2, {
+    message: 'Province code must be at least 2 characters.'
+  }),
+  zip: z.string().min(5, {
+    message: 'Zip code must be at least 5 characters.'
   })
 });
 
-export const SpecialOrder = ({ submit }: any) => {
-  // bg-gradient-to-br from-pink-200 via-orange-100 to-yellow-200 py-12 md:py-16 lg:py-24
-  // 1. Define your form.
+export const SpecialOrder = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema)
   });
 
   // 2. Define a submit handler.
-  const onSubmit = async (data: any) => {
-    const fields = Object.keys(data).map((key: any) => {
-      return {
-        key,
-        value: data[key]
-      };
+  const onSubmit = (data: any) => {
+    const { address1, address2, city, provinceCode, zip, ...rest } = data;
+    fetch('/api/special-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        data: {
+          ...rest,
+          address: {
+            address1,
+            address2,
+            city,
+            provinceCode,
+            zip
+          }
+        }
+      })
+    }).then((res) => {
+      console.log('res: ', res);
     });
 
-    await submit(fields);
-
-    toast({
-      title: 'Success!',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          Thank you for submitting your special request. We will be in touch shortly!
-        </pre>
-      )
-    });
+    toast('Thank you for submitting your special request. We will be in touch shortly!');
+    router.push('/');
   };
   return (
     <div className="mx-auto max-w-xl rounded-md border bg-white p-6 shadow-sm">
@@ -78,12 +114,12 @@ export const SpecialOrder = ({ submit }: any) => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-4">
           <FormField
             control={form.control}
-            name="name"
+            name="title"
             render={({ field }) => (
               <FormItem className="block text-sm font-medium text-gray-700">
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Name your creation</FormLabel>
                 <FormControl>
-                  <Input id="name" placeholder="My Fuzzy Wuzzy" {...field} />
+                  <Input id="title" placeholder="My Fuzzy Wuzzy" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -129,23 +165,7 @@ export const SpecialOrder = ({ submit }: any) => {
               </FormItem>
             )}
           />
-          {/* <div>
-          <label className="block text-sm font-medium text-gray-700" htmlFor="color">
-            Color
-          </label>
-          <Select>
-            <SelectTrigger id="color">
-              <SelectValue placeholder="Select color" />
-            </SelectTrigger>
-            <SelectContent position="popper">
-              <SelectItem value="black">Black</SelectItem>
-              <SelectItem value="white">White</SelectItem>
-              <SelectItem value="red">Red</SelectItem>
-              <SelectItem value="blue">Blue</SelectItem>
-              <SelectItem value="green">Green</SelectItem>
-            </SelectContent>
-          </Select>
-        </div> */}
+
           <FormField
             control={form.control}
             name="phone"
@@ -176,18 +196,100 @@ export const SpecialOrder = ({ submit }: any) => {
 
           <FormField
             control={form.control}
-            name="address"
+            name="firstName"
             render={({ field }) => (
               <FormItem className="block text-sm font-medium text-gray-700">
-                <FormLabel>Address</FormLabel>
+                <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Textarea id="address" placeholder="Enter your address" {...field} />
+                  <Textarea id="firstName" placeholder="Enter your first name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem className="block text-sm font-medium text-gray-700">
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Textarea id="lastName" placeholder="Enter your last name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="address1"
+            render={({ field }) => (
+              <FormItem className="block text-sm font-medium text-gray-700">
+                <FormLabel>Address 1</FormLabel>
+                <FormControl>
+                  <Textarea id="address1" placeholder="Enter your address line 1" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="address2"
+            render={({ field }) => (
+              <FormItem className="block text-sm font-medium text-gray-700">
+                <FormLabel>Address 2</FormLabel>
+                <FormControl>
+                  <Textarea id="address2" placeholder="Enter your address line 2" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+              <FormItem className="block text-sm font-medium text-gray-700">
+                <FormLabel>City</FormLabel>
+                <FormControl>
+                  <Textarea id="city" placeholder="Enter your city" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="provinceCode"
+            render={({ field }) => (
+              <FormItem className="block text-sm font-medium text-gray-700">
+                <FormLabel>Province Code</FormLabel>
+                <FormControl>
+                  <Textarea id="provinceCode" placeholder="Enter your province code" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="zip"
+            render={({ field }) => (
+              <FormItem className="block text-sm font-medium text-gray-700">
+                <FormLabel>Zip Code</FormLabel>
+                <FormControl>
+                  <Textarea id="zip" placeholder="Enter your zip code" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button
             className="ml-auto mt-8 block bg-rose-500 hover:bg-rose-600"
             size="lg"
