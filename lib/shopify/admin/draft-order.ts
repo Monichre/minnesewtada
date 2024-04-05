@@ -5,46 +5,43 @@ export const createSpecialRequestDraftOrder = async (payload: any): Promise<any>
 
   const fields = formatPayloadForCustomAttributes(payload);
 
-  const res = await adminClient
-    .request(
-      `mutation draftOrderCreate($input: DraftOrderInput!) {
+  const res = await adminClient.request(
+    `mutation draftOrderCreate($input: DraftOrderInput!) {
       draftOrderCreate(input: $input) {
         draftOrder {
           id
         }
       }
     }`,
-      {
-        variables: {
-          input: {
-            note: JSON.stringify(payload),
-            email,
+    {
+      variables: {
+        input: {
+          note: JSON.stringify(payload),
+          email,
+          phone,
+          visibleToCustomer: false,
+          tags: ['custom'],
+
+          shippingAddress: {
+            firstName,
+            lastName,
             phone,
-            visibleToCustomer: false,
-            tags: ['custom'],
+            ...address
+          },
 
-            shippingAddress: {
-              firstName,
-              lastName,
-              phone,
-              ...address
-            },
-
-            lineItems: [
-              {
-                title: 'Special Request',
-                originalUnitPrice: 100,
-                quantity: 1
-              }
-            ],
-            customAttributes: fields
-          }
+          lineItems: [
+            {
+              title: 'Special Request',
+              originalUnitPrice: 100,
+              quantity: 1
+            }
+          ],
+          customAttributes: fields
         }
       }
-    )
-    .catch((err) => {
-      console.log('err: ', err);
-    });
+    }
+  );
+
   if (res?.errors) {
     const {
       errors: { graphQLErrors }

@@ -1,4 +1,4 @@
-import { createAdminApiClient } from '@shopify/admin-api-client';
+const { createAdminApiClient } = require('@shopify/admin-api-client');
 
 export const adminClient = createAdminApiClient({
   storeDomain: process.env.SHOPIFY_STORE_DOMAIN || '',

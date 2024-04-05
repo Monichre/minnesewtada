@@ -4,9 +4,8 @@ export const createSpecialRequestMetaObject = async (data: any) => {
   const fields: any = formatPayloadForCustomAttributes(data);
   console.log('fields: ', fields);
 
-  const res = await adminClient
-    .request(
-      `mutation CreateMetaobject($metaobject: MetaobjectCreateInput!) {
+  const res = await adminClient.request(
+    `mutation CreateMetaobject($metaobject: MetaobjectCreateInput!) {
       metaobjectCreate(metaobject: $metaobject) {
         metaobject {
           handle
@@ -21,18 +20,15 @@ export const createSpecialRequestMetaObject = async (data: any) => {
         }
       }
     }`,
-      {
-        variables: {
-          metaobject: {
-            type: 'special_request',
-            fields
-          }
+    {
+      variables: {
+        metaobject: {
+          type: 'special_request',
+          fields
         }
       }
-    )
-    .catch((err) => {
-      console.log('err: ', err);
-    });
+    }
+  );
 
   console.log('createSpecialOrder res: ', res);
   if (res?.errors) {
