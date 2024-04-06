@@ -1,3 +1,4 @@
+import { Carousel } from '@/components/carousel';
 import { Hero } from '@/components/hero/hero';
 import { getCollectionProducts } from '@/lib/shopify';
 import Footer from 'components/layout/footer';
@@ -19,19 +20,18 @@ export default async function HomePage() {
 
   if (!homepageItems[0] || !homepageItems[1] || !homepageItems[2]) return null;
 
-  const [firstProduct, secondProduct, thirdProduct, fourthProduct, fifthProduct, sixthProduct] =
-    homepageItems;
+  const [firstProduct, secondProduct, thirdProduct] = homepageItems;
 
   return (
     <>
-      <Hero products={[fourthProduct, fifthProduct, sixthProduct]} />
+      <Hero products={[firstProduct, secondProduct, thirdProduct]} />
       {/* <ThreeItemGrid
         firstProduct={firstProduct}
         secondProduct={secondProduct}
         thirdProduct={thirdProduct}
       /> */}
       <Suspense>
-        {/* <Carousel /> */}
+        <Carousel />
         <Suspense>
           <Footer />
         </Suspense>

@@ -14,6 +14,7 @@ export async function generateMetadata({
   params: { collection: string };
 }): Promise<Metadata> {
   const collection = await getCollection(params.collection);
+  console.log('collection: ', collection);
 
   if (!collection) return notFound();
 
